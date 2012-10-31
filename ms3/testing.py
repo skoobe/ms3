@@ -22,10 +22,10 @@ class MS3Server(object):
             Start the MS3 server with the provided data directory. This method
             will fork the process and start a server in the child process.
 
-            with_exec specifies if the server should overwrite the child process
-            image (with it's own environment and runnable code). Use this when
-            in the project you're testing you're also using tornado (maybe a
-            different version of tornado).
+            with_exec specifies if the server should overwrite the child
+            process image (with it's own environment and runnable code). Use
+            this when in the project you're testing you're also using tornado
+            (maybe a different version of tornado).
         """
         assert not cls._pid
         cls._port = port

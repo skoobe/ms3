@@ -2,7 +2,9 @@
     The Tornado application
 """
 import os
+import errno
 import shutil
+import socket
 import hashlib
 import logging
 import urlparse
@@ -152,6 +154,7 @@ class ListAllMyBucketsHandler(BaseHandler):
         except (IOError, OSError):
             pass
 
+
 class ObjectHandler(BaseHandler):
     """ Handle for GET/PUT/HEAD/DELETE on objects """
     def get(self, name, key):
@@ -259,7 +262,7 @@ def fix_TCPServer_handle_connection():
                                   read_chunk_size=read_chunk_size)
             self.handle_stream(stream, address)
         except Exception:
-            app_log.error("Error in connection callback", exc_info=True)
+            _logger.error("Error in connection callback", exc_info=True)
 
     tornado.netutil.TCPServer._handle_connection = _handle_connection
 

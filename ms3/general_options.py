@@ -1,5 +1,4 @@
 """ Helper module for handling common options """
-import logging
 import tornado.options
 from tornado.options import define, options
 

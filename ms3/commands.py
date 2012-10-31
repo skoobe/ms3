@@ -1,3 +1,4 @@
+""" AWS Related models and responses """
 import re
 import os
 import time
@@ -10,6 +11,7 @@ XMLNS = "http://doc.s3.amazonaws.com/2006-03-01"
 
 
 def t(tag, text, **attrs):
+    """ Shorthand for creating an XML element with the provided text """
     element = lxml.etree.Element(tag, **attrs)
     if not isinstance(text, basestring):
         text = str(text)
@@ -18,11 +20,14 @@ def t(tag, text, **attrs):
 
 
 def ea(element, *children):
+    """ Shorthand for adding children to an XML element """
     for child in children:
         element.append(child)
 
 
 def e(tag, *children, **attrs):
+    """ Shorthand for creating an XML element with provided children
+        and attributes """
     element = lxml.etree.Element(tag, **attrs)
     ea(element, *children)
     return element
@@ -35,7 +40,8 @@ def as_date(timestamp):
 
 def httpdate(timestamp):
     """
-http://stackoverflow.com/questions/225086/rfc-1123-date-representation-in-python
+        http://stackoverflow.com/questions/225086/\
+        rfc-1123-date-representation-in-python
 
         Return a string representation of a date according to RFC 1123
         (HTTP/1.1). The supplied date must be in UTC.
@@ -61,7 +67,7 @@ def compare_entries(entryA, entryB):
 
 
 class Entry(AWSObject):
-
+    """ Base class for an AWS S3 Object """
     @property
     def complete_path(self):
         return os.path.join(self.base_path, self.name)
@@ -91,7 +97,7 @@ class Entry(AWSObject):
 
 
 class BucketEntry(Entry):
-
+    """ Represents an object (key) in AWS terminology """
     @property
     def etag(self):
         with open(self.complete_path, "r") as fp:
@@ -172,6 +178,7 @@ class Bucket(Entry):
         stat = super(Bucket, self)._complete_metadata()
         metadata_path = os.path.join(self.complete_path, self.METADATA)
         self._parse_metadata(metadata_path)
+        return stat
 
     def _parse_metadata(self, path):
         if not os.path.exists(path):
@@ -206,7 +213,7 @@ class Bucket(Entry):
     def create(cls, name, datadir):
         try:
             os.makedirs(os.path.join(datadir, name))
-        except (OSError, IOError) as exception:
+        except (OSError, IOError):
             return None
         return Bucket(name, datadir)
 
@@ -249,7 +256,7 @@ class Bucket(Entry):
         if self.versioned:
             if not version_id:
                 key = "%s.%.6f" % (key, time.time())
-                with open(os.path.join(self.complete_path, key), "w") as fp:
+                with open(os.path.join(self.complete_path, key), "w"):
                     pass
                 return  # add a 0 bytes file for deleted marker
             else:
@@ -372,6 +379,7 @@ class VersioningConfigurationResponse(Response):
             ea(result,
                t("Status", "Enabled"))
         return result
+
 
 class CopyObjectResponse(Response):
 

@@ -132,7 +132,7 @@ class BucketOperationsTestCase(unittest2.TestCase):
         self.assertEquals("simple data", keys[0].get_contents_as_string())
 
     def test_create_bucket_twice(self):
-        bucket = self.s3.create_bucket("simple")
+        self.s3.create_bucket("simple")
         self.assertRaises(S3CreateError, self.s3.create_bucket, "simple")
 
     def test_delete_bucket(self):
@@ -228,4 +228,4 @@ class BucketOperationsTestCase(unittest2.TestCase):
 
 
 if __name__ == "__main__":
-    unittest2.main()
+    helpers.run()
