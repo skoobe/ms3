@@ -7,7 +7,7 @@ import hashlib
 import datetime
 import lxml.etree
 
-XMLNS = "http://doc.s3.amazonaws.com/2006-03-01"
+XMLNS = "http://s3.amazonaws.com/doc/2006-03-01/"
 
 
 def t(tag, text, **attrs):
@@ -55,7 +55,9 @@ def httpdate(timestamp):
 
 
 def xml_string(obj):
-    return lxml.etree.tostring(obj, pretty_print=True)
+    return lxml.etree.tostring(obj, pretty_print=True,
+                                    encoding="utf-8",
+                                    xml_declaration=True)
 
 
 class AWSObject(object):

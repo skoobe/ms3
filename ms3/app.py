@@ -116,6 +116,9 @@ class BucketHandler(BaseHandler):
                 bucket, bucket.list(prefix=prefix))
         self.render_xml(result)
 
+    def head(self, name):
+        self.set_status(200)
+
     def put(self, name):
         if self.has_section("versioning"):
             bucket = self.get_bucket(name)
