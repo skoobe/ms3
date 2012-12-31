@@ -5,16 +5,28 @@ import signal
 import urllib
 
 
+def wait_until(func, *args):
+    t1 = time.time()
+    while not func(*args):
+        time.sleep(0.1)
+        if time.time() - t1 > 3: # seconds
+            raise Exception("wait_until %s timeout raised", func)
+
+
+def is_running(port):
+    try:
+        urllib.urlopen("http://localhost:%d" % port)
+    except IOError:
+        return False
+    return True
+
+
 class MS3Server(object):
     """ Class for managing a ms3 server """
     _pid = None
     _port = None
     datadir = None
 
-    @classmethod
-    def wipe_workspace(self):
-        # TODO: implement a DELETE call on /
-        pass
 
     @classmethod
     def start(cls, datadir=None, config=None, port=9010, with_exec=False):
@@ -56,12 +68,7 @@ class MS3Server(object):
                 args.insert(0, None)  # pass tornado options
                 ms3.app.run(args)
         else:
-            while True:
-                try:
-                    urllib.urlopen("http://localhost:%s/" % port)
-                    break
-                except IOError:
-                    time.sleep(0.01)
+            wait_until(lambda: not is_running(cls._port))
 
     @classmethod
     def stop(cls):
@@ -70,14 +77,7 @@ class MS3Server(object):
             os.kill(cls._pid, signal.SIGTERM)
             cls._pid = None
             cls.datadir = None
-            retries = 10
-            while True and retries:
-                try:
-                    urllib.urlopen("http://localhost:%s" % cls._port)
-                    time.sleep(0.01)
-                    retries -= 1
-                except IOError:
-                    break
+            wait_until(lambda: not is_running(cls._port))
             cls._port = None
 
 

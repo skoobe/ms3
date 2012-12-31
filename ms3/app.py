@@ -290,10 +290,12 @@ class MS3App(tornado.web.Application):
             self.datadir = os.path.normpath(os.path.join(
                 os.path.dirname(os.path.abspath(__file__)), "..",
                 self.datadir))
-        try:
-            os.makedirs(self.datadir)
-        except (OSError, IOError) as exception:
-            _logger.warn("Tried to create %s: %s", self.datadir, exception)
+
+        if not os.path.exists(self.datadir):
+            try:
+                os.makedirs(self.datadir)
+            except (OSError, IOError) as exception:
+                _logger.warn("Tried to create %s: %s", self.datadir, exception)
         tornado.web.Application.__init__(self, handlers, **settings)
         fix_TCPServer_handle_connection()
 

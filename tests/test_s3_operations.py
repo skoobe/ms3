@@ -3,6 +3,7 @@ import shutil
 import os.path
 import helpers
 import unittest2
+import tempfile
 
 from ms3.testing import MS3Server
 
@@ -16,11 +17,8 @@ def cleanup(dirname):
     shutil.rmtree(dirname, True)
 
 
-def get_data_dir(dirname):
-    data = os.path.join(os.path.dirname(os.path.abspath(__file__)), dirname)
-    cleanup(data)
-    os.makedirs(data)
-    return data
+def get_data_dir(prefix=None):
+    return tempfile.mkdtemp(prefix=prefix)
 
 
 def create_bucket_dir(datadir, dirname):
