@@ -138,6 +138,8 @@ class BucketEntry(Entry):
 
     def set_headers(self, handler):
         handler.set_header('Last-Modified', httpdate(self.created_at))
+        handler.set_header('Access-Control-Allow-Origin', '*')
+        handler.set_header('Access-Control-Allow-Headers', '*')
 
 
 def is_more_recent(entryA, entryB):
